@@ -77,7 +77,7 @@ xgb_model = xgb.XGBRegressor(objective ='reg:squarederror', colsample_bytree =0.
                            max_depth = 4, subsample=1, n_estimators = 1000).fit(X_train,y_train)
 
 #input the crystal structure file you want to predict
-c1 = read('/Users/ziyanzhang/Downloads/dscribe/examples/MoWBC.cif')
+c1 = read('/Users/ziyanzhang/Downloads/dscribe/examples/anycrystalstructure.cif')
 
 c1s = [c1,c1,c1,c1,c1,c1,c1,c1,c1,c1,c1]
 c1s_feature_vectors = soap.create(c1s, n_jobs=1)
@@ -90,19 +90,19 @@ c1s_feature_pd[["temp", "load"]] = st_scaler.transform(c1s_feature_pd[["temp", "
 c1s_csr_feature_pd = csr_matrix(c1s_feature_pd)
 
 #xgb_model = xgb_reg.fit(X_train, y_train)
-pred = xgb_model.predict(c1s_csr_feature_pd)
-print(pred)
+#pred = xgb_model.predict(c1s_csr_feature_pd)
+#print(pred)
 
-#n_repeat = 5
-#estimator=BaggingRegressor(base_estimator=xgb_reg, max_samples=500, n_estimators=1)
-#print('bagging estimator assigned')
+n_repeat = 5
+estimator=BaggingRegressor(base_estimator=xgb_reg, max_samples=500, n_estimators=1)
+print('bagging estimator assigned')
 
-#predict_y1 = np.zeros((len(c1s), n_repeat))
+predict_y1 = np.zeros((len(c1s), n_repeat))
 
-#for i in range(n_repeat):
-#    estimator.fit(X_train, y_train)
-#    print('one estimator fit')
-#    predict_y1[:,i] = estimator.predict(c1s_csr_feature_pd)
+for i in range(n_repeat):
+    estimator.fit(X_train, y_train)
+    print('one estimator fit')
+    predict_y1[:,i] = estimator.predict(c1s_csr_feature_pd)
 
-#pred_y1 = pd.DataFrame(predict_y1)
-#pred_y1.to_excel('pred1_y.xlsx')
+pred_y1 = pd.DataFrame(predict_y1)
+pred_y1.to_excel('pred1_y.xlsx')
